@@ -1,106 +1,45 @@
-# Project Title
+# Mancala AI Project
 
-## Short Project Title
-> _Enter a concise title for your project._
-
----
-
-## Group Members
-- Member 1: Chau Phan
-- Member 2: Trent Nguyen
-- Member 3: Dylan Tran
+## 👥 Group Members
+- Chau Phan  
+- Trent Nguyen  
+- Dylan Tran  
 
 ---
 
-## Problem Statement
-Describe the problem you want to work on:
-- What is the issue?
-- Why is it important?
-- Who does it affect?
-- What is the goal of your project?
+## 📌 Project Overview
+The goal of this project is to develop an intelligent Mancala AI agent that human players can compete against. The AI will support multiple difficulty levels and will include adaptive behavior that adjusts based on the player's playstyle.
 
 ---
 
-## Programming Language
-- Primary Language:
-- Libraries/Frameworks:
-- Development Tools (e.g., VSCode, Android Studio, etc.):
+## 🎯 Objectives
+- Implement a fully functional Mancala game
+- Develop an AI agent using decision-making algorithms
+- Introduce multiple difficulty levels
+- Create an adaptive AI that learns and responds to player behavior
+- Build a user-friendly interface
 
 ---
 
-## Datasets (If Required)
-- Dataset Name:
-- Source:
-- Size:
-- Description:
-- Any preprocessing required:
+## 🛠️ Technologies Used
+- **Programming Language:** Python  
+- **Libraries/Frameworks:** Pygame
 
 ---
 
-## Existing Code
-- Is there existing code? (Yes/No)
-- If yes:
-  - Source of code:
-  - What modifications or extensions will you add?
-  - What improvements will you implement?
+## 🧠 Algorithm Approach
+The AI agent will be built using:
+
+- **Minimax Algorithm**
+  - Explores possible future game states
+  - Chooses optimal moves assuming rational opponent behavior
+
+- **Alpha-Beta Pruning**
+  - Optimizes Minimax by reducing unnecessary computations
+  - Improves performance and efficiency
+
+- **Adaptive Learning (Extension)**
+  - Tracks player decisions
+  - Adjusts AI difficulty dynamically based on playstyle
 
 ---
-
-## Algorithm / Approach
-Describe your technical approach:
-- Models or algorithms you plan to use:
-- Why you chose them:
-- How the system will work (step-by-step overview):
-- Evaluation metrics (if applicable):
-
----
-
-## Project Timeline
-
-### Week 1:
-- 
-
-### Week 2:
-- 
-
-### Week 3:
-- 
-
-### Week 4:
-- 
-
-### Final Week:
-- 
-
----
-
-## Special Computing Platform
-- Hardware (e.g., GPU, Raspberry Pi, Cloud services):
-- Software Requirements:
-- Any special configurations needed:
-
----
-
-## Roles and Responsibilities
-
-### Member 1:
-- 
-
-### Member 2:
-- 
-
-### Member 3:
-- 
-
-> If this is a Machine Learning project, specify who has ML experience and what they will handle (e.g., model training, data preprocessing, evaluation, etc.).
-
----
-
-## Expected Outcome
-- What will your final deliverable be?
-- Demo, application, report, model, etc.
-
----
-
-## References (If Any)
-- 
