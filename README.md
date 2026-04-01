@@ -43,3 +43,23 @@ The AI agent will be built using:
   - Adjusts AI difficulty dynamically based on playstyle
 
 ## How To Run 
+
+1. Create Virtual Environment
+  ```bash
+  python -m venv venv
+  source venv/bin/activate  # Linux
+  ```
+   or 
+  ```bash
+  venv\Scripts\activate # Windows
+  ```
+
+2. Install Requirements 
+  ```bash
+  pip install -r requirements.txt
+  ```
+  
+3. Run Game
+  ```bash
+  python main.py
+  ```
