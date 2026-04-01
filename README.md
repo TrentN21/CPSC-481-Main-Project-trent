@@ -1,18 +1,18 @@
 # Mancala AI Project
 
-## 👥 Group Members
+## Group Members
 - Chau Phan  
 - Trent Nguyen  
 - Dylan Tran  
 
 ---
 
-## 📌 Project Overview
+## Project Overview
 The goal of this project is to develop an intelligent Mancala AI agent that human players can compete against. The AI will support multiple difficulty levels and will include adaptive behavior that adjusts based on the player's playstyle.
 
 ---
 
-## 🎯 Objectives
+## Objectives
 - Implement a fully functional Mancala game
 - Develop an AI agent using decision-making algorithms
 - Introduce multiple difficulty levels
@@ -21,13 +21,13 @@ The goal of this project is to develop an intelligent Mancala AI agent that huma
 
 ---
 
-## 🛠️ Technologies Used
+## Technologies Used
 - **Programming Language:** Python  
 - **Libraries/Frameworks:** Pygame
 
 ---
 
-## 🧠 Algorithm Approach
+## Algorithm Approach
 The AI agent will be built using:
 
 - **Minimax Algorithm**
@@ -42,4 +42,4 @@ The AI agent will be built using:
   - Tracks player decisions
   - Adjusts AI difficulty dynamically based on playstyle
 
----
+## How To Run 
