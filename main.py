@@ -57,9 +57,11 @@ opsendcondition = [
 # logic for opponent
 def opchoice():
   #add logic later
+  refresh()
   x=random.randint(7,12) 
   while pits[x][4] == 0:
     x=random.randint(7,12)
+  print(x)
   return(x)
 
 #refreshes board
@@ -90,14 +92,16 @@ def action(number, side):
     pits[counter][4] += 1
     time.sleep(.5)
     refresh()
-  if side == 0 and counter < 6 and pits[counter][4] == 1:
+  if side == 0 and counter < 6 and pits[counter][4] == 1 and pits[-(counter+2)][4] != 0:
     pits[6][4]  += (pits[-(counter+2)][4] + 1)
     pits[-(counter+2)][4] = 0
     pits[counter][4] = 0
-  elif side == 1 and 13 > counter > 6 and pits[counter][4] == 1:
+  elif side == 1 and 13 > counter > 6 and pits[counter][4] == 1 and pits[12-counter][4] != 0:
     pits[-1][4]  += (pits[12-counter][4] + 1)
     pits[12-counter][4] = 0
     pits[counter][4] = 0
+  time.sleep(1)
+  refresh()
   if counter == 13:
     action(opchoice(),1)
   elif side == 0 and counter != 6:
