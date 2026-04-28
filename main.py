@@ -59,12 +59,10 @@ class Button:
         self.text = text
         self.pos = pos
         self.button = pygame.rect.Rect(self.pos[0], self.pos[1], 160, 60)
-
     def draw(self):
         btn = pygame.draw.rect(screen, C_ACCENT, self.button, 3, border_radius=20)
         text = FONT_MD.render(self.text, True, C_STONE_SH)
         screen.blit(text, text.get_rect(center=self.button.center))
-
     def collidepoint(self, point):
         return self.button.collidepoint(point)
 
@@ -99,18 +97,17 @@ turn = 0
 # Animation queue: list of (pit_index, delta) to apply one at a time
 anim_queue = []
 anim_timer  = 0
-ANIM_DELAY  = 300          # ms per stone drop
+ANIM_DELAY  = 400          # ms per stone drop
 
 phase = "menu"          # "playing" | "game_over"
 winner_text = ""
 hover_pit   = -1
 
 diff_list = ["Easy", "Medium", "Hard"]
-difficulty  = 0   
+difficulty  = 1   
 
 start_btn = Button("Start", (W // 2 - 80, H // 2 - 80))
 diff_btn = Button("Difficulty", (W // 2 - 80, H // 2 ))
-
 
 # ── AI ────────────────────────────────────────────────────────────────────────
 def ai_pick():
@@ -143,8 +140,6 @@ def ai_pick():
     else:
         #for min max
         pass
-
-
 
 # ── Action Logic (builds animation queue) ────────────────────────────────────
 def enqueue_action(start, side):
@@ -320,9 +315,6 @@ def draw_menu():
 
     text = FONT_MD.render("Difficulty: " + str(diff_list[difficulty]), True, C_STONE_SH)
     screen.blit(text, text.get_rect(center=(W // 2, H // 2 + 100)))
-
-
-    
 
 def draw_board():
     # Board background
