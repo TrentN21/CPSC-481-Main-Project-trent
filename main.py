@@ -54,6 +54,20 @@ MAN_H     = BOARD_H
 PIT_AREA_W = BOARD_W - 2 * (MAN_W + PIT_GAP)
 COL_W      = PIT_AREA_W // 6
 
+class Button:
+    def __init__(self, text, pos):
+        self.text = text
+        self.pos = pos
+        self.button = pygame.rect.Rect(self.pos[0], self.pos[1], 160, 60)
+
+    def draw(self):
+        btn = pygame.draw.rect(screen, C_ACCENT, self.button, 3, border_radius=20)
+        text = FONT_MD.render(self.text, True, C_STONE_SH)
+        screen.blit(text, text.get_rect(center=self.button.center))
+
+    def collidepoint(self, point):
+        return self.button.collidepoint(point)
+
 def pit_center(index):
     """Return (cx, cy) for a pit circle."""
     if index == 6:          # player mancala (right)
@@ -87,33 +101,50 @@ anim_queue = []
 anim_timer  = 0
 ANIM_DELAY  = 300          # ms per stone drop
 
-phase = "playing"          # "playing" | "game_over"
+phase = "menu"          # "playing" | "game_over"
 winner_text = ""
 hover_pit   = -1
 
+diff_list = ["Easy", "Medium", "Hard"]
+difficulty  = 0   
+
+start_btn = Button("Start", (W // 2 - 80, H // 2 - 80))
+diff_btn = Button("Difficulty", (W // 2 - 80, H // 2 ))
+
+
 # ── AI ────────────────────────────────────────────────────────────────────────
 def ai_pick():
-    """Simple scoring AI for opponent (pits 7-12)."""
-    # Priority 1: move that lands in mancala (free turn)
-    for i in range(7, 13):
-        if board[i] > 0 and (i + board[i]) % 14 == 13:
-            return i
-    # Priority 2: capture (land on empty pit on own side, opposite has stones)
-    for i in range(7, 13):
-        if board[i] > 0:
-            end = (i + board[i]) % 14
-            if 7 <= end <= 12 and board[end] == 0 and board[12 - end] > 0:
-                return i
-    # Priority 3: pick the pit with the most stones
-    best, best_val = -1, -1
-    for i in range(7, 13):
-        if board[i] > best_val:
-            best_val, best = board[i], i
-    if best == -1 or best_val == 0:
-        # fallback random
+    if difficulty == 0:
+        #random choice among valid moves
         valid = [i for i in range(7, 13) if board[i] > 0]
         return random.choice(valid) if valid else -1
-    return best
+    elif difficulty == 1:
+        """Simple scoring AI for opponent (pits 7-12)."""
+        # Priority 1: move that lands in mancala (free turn)
+        for i in range(7, 13):
+            if board[i] > 0 and (i + board[i]) % 14 == 13:
+                return i
+        # Priority 2: capture (land on empty pit on own side, opposite has stones)
+        for i in range(7, 13):
+            if board[i] > 0:
+                end = (i + board[i]) % 14
+                if 7 <= end <= 12 and board[end] == 0 and board[12 - end] > 0:
+                    return i
+        # Priority 3: pick the pit with the most stones
+        best, best_val = -1, -1
+        for i in range(7, 13):
+            if board[i] > best_val:
+                best_val, best = board[i], i
+        if best == -1 or best_val == 0:
+            # fallback random
+            valid = [i for i in range(7, 13) if board[i] > 0]
+            return random.choice(valid) if valid else -1
+        return best
+    else:
+        #for min max
+        pass
+
+
 
 # ── Action Logic (builds animation queue) ────────────────────────────────────
 def enqueue_action(start, side):
@@ -269,6 +300,30 @@ def draw_stones_in_pit(cx, cy, area_r, count):
         pygame.draw.circle(screen, C_STONE_SH, (px + 1, py + 2), stone_r)
         pygame.draw.circle(screen, C_STONE,    (px,     py),     stone_r)
 
+def draw_menu():
+    global phase, difficulty, diff_list 
+    overlay = pygame.Surface((W, H), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 170))
+    screen.blit(overlay, (0, 0))
+
+    box_w, box_h = 300, 400
+    bx = (W - box_w) // 2
+    by = (H - box_h) // 2
+    draw_rounded_rect(screen, C_BANNER_BG, (bx, by, box_w, box_h), 20)
+    pygame.draw.rect(screen, C_ACCENT, (bx, by, box_w, box_h), 3, border_radius=20)
+
+    title = FONT_LG.render("Mancala", True, C_ACCENT)
+    screen.blit(title, title.get_rect(center=(W // 2, H // 4)))
+
+    start_btn.draw()
+    diff_btn.draw()
+
+    text = FONT_MD.render("Difficulty: " + str(diff_list[difficulty]), True, C_STONE_SH)
+    screen.blit(text, text.get_rect(center=(W // 2, H // 2 + 100)))
+
+
+    
+
 def draw_board():
     # Board background
     board_rect = pygame.Rect(BOARD_X, BOARD_Y, BOARD_W, BOARD_H)
@@ -345,12 +400,21 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit(); sys.exit()
-
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if start_btn.collidepoint(pygame.mouse.get_pos()):
+                phase = "playing"
+            elif diff_btn.collidepoint(pygame.mouse.get_pos()):
+                difficulty = (difficulty + 1) % len(diff_list)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_q:
                 pygame.quit(); sys.exit()
             if event.key == pygame.K_r:
                 reset()
+            if event.key == pygame.K_ESCAPE:
+                if phase == "playing":
+                    phase = "menu"
+                elif phase == "menu":
+                    phase = "playing"
 
         if phase == "playing" and not anim_queue:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -394,6 +458,14 @@ while True:
     # ── Draw ──────────────────────────────────────────────────────────────────
     screen.fill(C_BG)
     draw_board()
+
+    menu_text = FONT_SM.render("press esc for menu", True, C_ACCENT)
+    screen.blit(menu_text, menu_text.get_rect(topleft=(20, 12)))
+
+    if phase == "menu":
+        draw_menu()
+
+    
     if phase == "game_over":
         draw_game_over()
 
