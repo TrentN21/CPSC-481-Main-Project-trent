@@ -165,7 +165,7 @@ def enqueue_action(start, side):
         # Skip opponent's mancala
         if side == 0 and counter == 13:
             counter += 1
-        elif side == 1 and counter == 7:
+        elif side == 1 and counter == 6:
             counter += 1
         counter %= 14
         anim_queue.append(("add", counter))
