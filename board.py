@@ -64,8 +64,135 @@ def ai_pick():
             return random.choice(valid) if valid else -1
         return best
     else:
-        # Placeholder for minimax
-        pass
+        # Minimax with alpha-beta pruning (AI = maximizer, side 1)
+        _, best_pit = alphabeta(board[:], depth=7, alpha=float('-inf'), beta=float('inf'), is_maximizing=True)
+        return best_pit if best_pit != -1 else -1
+
+
+# ── Minimax helpers ───────────────────────────────────────────────────────────
+def sim_move(b, pit, side):
+    """
+    Apply a move to board copy `b` for `side` (0=player, 1=AI).
+    Returns (new_board, free_turn).
+    """
+    stones = b[pit]
+    if stones == 0:
+        return b, False
+    b = b[:]
+    b[pit] = 0
+    counter = pit
+    for _ in range(stones):
+        counter += 1
+        if side == 0 and counter == 13:
+            counter += 1
+        elif side == 1 and counter == 6:
+            counter += 1
+        counter %= 14
+        b[counter] += 1
+
+    # Capture
+    if side == 0 and 0 <= counter <= 5 and b[counter] == 1:
+        opp = 12 - counter
+        if b[opp] > 0:
+            b[6] += b[opp] + b[counter]
+            b[opp] = 0
+            b[counter] = 0
+    elif side == 1 and 7 <= counter <= 12 and b[counter] == 1:
+        opp = 12 - counter
+        if b[opp] > 0:
+            b[13] += b[opp] + b[counter]
+            b[opp] = 0
+            b[counter] = 0
+
+    free_turn = (side == 0 and counter == 6) or (side == 1 and counter == 13)
+    return b, free_turn
+
+
+def sim_check_end(b):
+    """Sweep remaining stones and return terminal board, or None if not terminal."""
+    player_empty = all(b[i] == 0 for i in range(6))
+    opp_empty    = all(b[i] == 0 for i in range(7, 13))
+    if not (player_empty or opp_empty):
+        return None
+    b = b[:]
+    for i in range(6):
+        b[6]  += b[i]; b[i] = 0
+    for i in range(7, 13):
+        b[13] += b[i]; b[i] = 0
+    return b
+
+
+def heuristic(b):
+    """Score from AI's perspective: mancala diff + positional bonuses."""
+    score = (b[13] - b[6]) * 2  # mancala stones weighted heavily
+
+    # Bonus for free-turn opportunities
+    for i in range(7, 13):
+        if b[i] > 0 and (i + b[i]) % 14 == 13:
+            score += 3
+    for i in range(6):
+        if b[i] > 0 and (i + b[i]) % 14 == 6:
+            score -= 3
+
+    # Bonus for capture opportunities
+    for i in range(7, 13):
+        if b[i] > 0:
+            end = (i + b[i]) % 14
+            if 7 <= end <= 12 and b[end] == 0 and b[12 - end] > 0:
+                score += b[12 - end]
+    for i in range(6):
+        if b[i] > 0:
+            end = (i + b[i]) % 14
+            if 0 <= end <= 5 and b[end] == 0 and b[12 - end] > 0:
+                score -= b[12 - end]
+
+    return score
+
+
+def alphabeta(b, depth, alpha, beta, is_maximizing):
+    """
+    Minimax with alpha-beta pruning.
+    Maximizer = AI (side 1), Minimizer = player (side 0).
+    Returns (score, best_pit).
+    """
+    terminal = sim_check_end(b)
+    if terminal is not None:
+        return (terminal[13] - terminal[6]) * 100, -1
+    if depth == 0:
+        return heuristic(b), -1
+
+    if is_maximizing:
+        side  = 1
+        pits  = [i for i in range(7, 13) if b[i] > 0]
+        if not pits:
+            return heuristic(b), -1
+        best_score, best_pit = float('-inf'), pits[0]
+        for pit in pits:
+            nb, free = sim_move(b, pit, side)
+            next_max = free   # free turn → AI goes again → still maximizing
+            score, _ = alphabeta(nb, depth - 1, alpha, beta, next_max)
+            if score > best_score:
+                best_score, best_pit = score, pit
+            alpha = max(alpha, best_score)
+            if beta <= alpha:
+                break
+        return best_score, best_pit
+    else:
+        side  = 0
+        pits  = [i for i in range(6) if b[i] > 0]
+        if not pits:
+            return heuristic(b), -1
+        best_score, best_pit = float('inf'), pits[0]
+        for pit in pits:
+            nb, free = sim_move(b, pit, side)
+            next_max  = not free   # free turn = player goes again = still minimizing
+            score, _  = alphabeta(nb, depth - 1, alpha, beta, next_max)
+            if score < best_score:
+                best_score, best_pit = score, pit
+            beta = min(beta, best_score)
+            if beta <= alpha:
+                break
+        return best_score, best_pit
 
 
 # ── Action Logic ──────────────────────────────────────────────────────────────
