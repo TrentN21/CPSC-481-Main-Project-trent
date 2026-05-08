@@ -50,6 +50,17 @@ def draw_pit(screen, index, stones, is_mancala=False, highlight=False):
         r = pygame.Rect(cx - rw // 2, cy - rh // 2, rw, rh)
         draw_rounded_rect(screen, C_MANCALA, r, 18)
         pygame.draw.rect(screen, C_ACCENT, r, 2, border_radius=18)
+
+        top_count = stones // 2
+        bottom_count = stones - top_count
+        spread_r = rw // 2 - 12
+        offset_y = rh // 4 + 5 
+
+        if top_count > 0:
+            draw_stones_in_pit(screen, cx, cy - offset_y, spread_r, top_count)
+        if bottom_count > 0:
+            draw_stones_in_pit(screen, cx, cy + offset_y, spread_r, bottom_count)
+        
         txt = FONT_LG.render(str(stones), True, C_TEXT)
         screen.blit(txt, txt.get_rect(center=(cx, cy)))
         lbl = FONT_TINY.render("PLAYER" if index == 6 else "AI", True, C_ACCENT)
