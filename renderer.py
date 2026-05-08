@@ -60,6 +60,9 @@ def draw_pit(screen, index, stones, is_mancala=False, highlight=False):
         pygame.draw.circle(screen, C_ACCENT, (cx, cy), PIT_R, 2)
         draw_stones_in_pit(screen, cx, cy, PIT_R - 8, stones)
 
+        count_txt = FONT_SM.render(str(stones), True, C_TEXT)
+        screen.blit(count_txt, count_txt.get_rect(center=(cx, cy - PIT_R - 15)))
+
 
 def draw_stones_in_pit(screen, cx, cy, area_r, count):
     if count == 0:
